@@ -20,4 +20,6 @@ public final class Map {
         this.width = width;
         this.rawMap = rawMap;
     }
+
+    //TODO Method which interprets chars as terrain
 }
