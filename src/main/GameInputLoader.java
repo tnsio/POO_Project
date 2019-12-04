@@ -1,6 +1,7 @@
 package main;
 
 import fileio.FileSystem;
+import utility.Coordinate;
 
 import java.util.ArrayList;
 
@@ -17,10 +18,10 @@ public final class GameInputLoader {
         final int mapHeight;
         final int mapWidth;
         final int nrHeroes;
+        final int nrRounds;
         final ArrayList<String> rawMap = new ArrayList<String>();
         final ArrayList<String> classNames = new ArrayList<String>();
-        final ArrayList<Integer> horizontalCoordinates = new ArrayList<Integer>();
-        final ArrayList<Integer> verticalCoordinates = new ArrayList<Integer>();
+        final ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
         final ArrayList<String> movesList = new ArrayList<String>();
 
         try {
@@ -36,17 +37,28 @@ public final class GameInputLoader {
             nrHeroes = fs.nextInt();
 
             for (int heroIter = 0; heroIter < nrHeroes; heroIter++) {
+                int horizontal, vertical;
+
                 classNames.add(fs.nextWord());
-                horizontalCoordinates.add(fs.nextInt());
-                verticalCoordinates.add(fs.nextInt());
+
+                horizontal = fs.nextInt();
+                vertical = fs.nextInt();
+
+                coordinates.add(new Coordinate(horizontal, vertical));
+            }
+
+            nrRounds = fs.nextInt();
+
+            for (int roundIter = 0; roundIter < nrRounds; roundIter++) {
+                movesList.add(fs.nextWord());
             }
 
             fs.close();
 
             return new GameInput(mapHeight, mapWidth, rawMap,
                     classNames,
-                    horizontalCoordinates,
-                    verticalCoordinates,
+                    coordinates,
+                    nrRounds,
                     movesList);
         } catch (Exception e1) {
             e1.printStackTrace();
