@@ -6,8 +6,20 @@ import heroes.Rogue;
 import heroes.Wizard;
 
 public interface FightContext {
-    float acceptFighter(Knight knight);
-    float acceptFighter(Pyromancer pyromancer);
-    float acceptFighter(Rogue rogue);
-    float acceptFighter(Wizard wizard);
+    default float acceptFighter(Knight knight) {
+        return 0f;
+    }
+
+    default float acceptFighter(Pyromancer pyromancer) {
+        return 0f;
+    }
+
+    default float acceptFighter(Rogue rogue) {
+        return 0f;
+    }
+
+    default float acceptFighter(Wizard wizard) {
+        return 0f;
+    }
+
 }

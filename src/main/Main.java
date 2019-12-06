@@ -1,5 +1,7 @@
 package main;
 
+import game.engine.GameEngine;
+
 public final class Main {
 
     private Main() {
@@ -8,7 +10,7 @@ public final class Main {
 
     public static void main(final String[] args) {
         if (args.length != 2) {
-            System.out.println("ERROR: Incorrect number of agruments!");
+            System.out.println("ERROR: Incorrect number of arguments!");
             return;
         }
 
@@ -18,5 +20,8 @@ public final class Main {
         gameInputLoader = new GameInputLoader(args[0], args[1]);
         gameInput = gameInputLoader.load();
 
+        GameEngine gameEngine = new GameEngine(gameInput);
+        gameEngine.play();
+        gameEngine.printHeroes();
     }
 }

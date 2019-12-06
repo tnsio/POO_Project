@@ -1,4 +1,6 @@
-package map;
+package utility;
+
+import java.util.Objects;
 
 public final class Coordinate {
     private int horizontal;
@@ -42,6 +44,8 @@ public final class Coordinate {
             case '_':
                 break;
             default:
+                // TODO folosim sau nu exceptii
+                break;
 
         }
     }
@@ -49,5 +53,31 @@ public final class Coordinate {
     @Override
     public String toString() {
         return "(" + horizontal +  ", " + vertical + ")";
+    }
+
+    public int getHorizontal() {
+        return horizontal;
+    }
+
+    public int getVertical() {
+        return vertical;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Coordinate that = (Coordinate) o;
+        return horizontal == that.horizontal &&
+                vertical == that.vertical;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(horizontal, vertical);
     }
 }
