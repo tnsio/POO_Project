@@ -5,6 +5,9 @@ import heroes.Hero;
 
 public abstract class Ability implements FightContext {
     public abstract int getBaseDamage(Hero attacker, Hero victim);
+    public  void applyStatus(final Hero attacker, final Hero victim) {
+
+    }
 
     /**
      * Returns the unrounded damage of an ability after class modifiers are applied.
@@ -23,18 +26,23 @@ public abstract class Ability implements FightContext {
      * @param victim
      * @return
      */
-    public float getRealDamage(final Hero attacker, final Hero victim) {
+    public float getFinalDamage(final Hero attacker, final Hero victim) {
         return getDamage(attacker, victim) * (1f + attacker.getModifier(attacker.getTerrain()));
     }
 
     /**
-     * Returns the unrounded real damage and changes the state of ability when necessary.
-     * @param attacker
-     * @param victim
-     * @return
+     * Executes the necessary modifications to the state of a ability after cast.
      */
-    public float cast(final Hero attacker, final Hero victim) {
-        return getRealDamage(attacker, victim);
+    public void afterCast() {
+
     }
 
+    /**
+     * Adds status effects on the victim if necessary.
+     * @param attacker
+     * @param victim
+     */
+    public void addStatusEffects(final Hero attacker, final Hero victim) {
+
+    }
 }

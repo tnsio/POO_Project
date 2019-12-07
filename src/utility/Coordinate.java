@@ -52,7 +52,7 @@ public final class Coordinate {
 
     @Override
     public String toString() {
-        return "(" + horizontal +  ", " + vertical + ")";
+        return "(" + vertical +  ", " + horizontal + ")";
     }
 
     public int getHorizontal() {
@@ -64,7 +64,7 @@ public final class Coordinate {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -72,8 +72,8 @@ public final class Coordinate {
             return false;
         }
         Coordinate that = (Coordinate) o;
-        return horizontal == that.horizontal &&
-                vertical == that.vertical;
+        return horizontal == that.horizontal
+                && vertical == that.vertical;
     }
 
     @Override

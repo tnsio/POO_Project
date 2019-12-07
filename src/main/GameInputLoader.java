@@ -6,12 +6,10 @@ import utility.Coordinate;
 import java.util.ArrayList;
 
 public final class GameInputLoader {
-    private final String mInputPath;
-    private final String mOutputPath;
+    private FileSystem fs;
 
-    GameInputLoader(final String inputPath, final String outputPath) {
-        mInputPath = inputPath;
-        mOutputPath = outputPath;
+    GameInputLoader(final FileSystem fs) {
+        this.fs = fs;
     }
 
     public GameInput load() {
@@ -25,8 +23,6 @@ public final class GameInputLoader {
         final ArrayList<String> movesList = new ArrayList<String>();
 
         try {
-            FileSystem fs = new FileSystem(mInputPath, mOutputPath);
-
             mapHeight = fs.nextInt();
             mapWidth = fs.nextInt();
 
@@ -41,8 +37,8 @@ public final class GameInputLoader {
 
                 classNames.add(fs.nextWord());
 
-                horizontal = fs.nextInt();
                 vertical = fs.nextInt();
+                horizontal = fs.nextInt();
 
                 coordinates.add(new Coordinate(horizontal, vertical));
             }
@@ -52,8 +48,6 @@ public final class GameInputLoader {
             for (int roundIter = 0; roundIter < nrRounds; roundIter++) {
                 movesList.add(fs.nextWord());
             }
-
-            fs.close();
 
             return new GameInput(mapHeight, mapWidth, rawMap,
                     classNames,

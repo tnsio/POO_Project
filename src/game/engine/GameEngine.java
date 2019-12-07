@@ -1,11 +1,13 @@
 package game.engine;
 
+import fileio.FileSystem;
 import heroes.Hero;
 import heroes.HeroFactory;
 import main.GameInput;
 import map.GameMap;
 import utility.Coordinate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +98,17 @@ public final class GameEngine {
     }
 
     private void fight(final Hero hero1, final Hero hero2) {
-        //TODO ASTAAA
+        int damageFrom1To2 = hero1.getAttackDamage(hero2);
+        int damageFrom2To1 = hero2.getAttackDamage(hero1);
+
+        hero1.takeDamage(damageFrom2To1);
+        hero2.takeDamage(damageFrom1To2);
+
+        hero1.addStatusEffects(hero2);
+        hero2.addStatusEffects(hero1);
+
+        hero1.afterAttack();
+        hero2.afterAttack();
     }
 
     public void play() {
@@ -104,13 +116,21 @@ public final class GameEngine {
             applyAllStatusEffects();
             buryHeroes();
             moveHeroes();
-            buryHeroes();
             fightAll();
+            buryHeroes();
         }
     }
 
-    public void printHeroes() {
+    public void printHeroes(final FileSystem fs) throws IOException {
         for (Hero hero: heroes) {
+            fs.writeWord(hero.toString());
+            fs.writeNewLine();
+        }
+    }
+
+    // TODO Make up your mind if you need to delete this
+    public void printHeroesToStdout() {
+        for (Hero hero : heroes) {
             System.out.println(hero);
         }
     }

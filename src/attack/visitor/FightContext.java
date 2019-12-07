@@ -6,6 +6,10 @@ import heroes.Rogue;
 import heroes.Wizard;
 
 public interface FightContext {
+    default float acceptFighter(Rogue rogue) {
+        return 0f;
+    }
+
     default float acceptFighter(Knight knight) {
         return 0f;
     }
@@ -14,12 +18,8 @@ public interface FightContext {
         return 0f;
     }
 
-    default float acceptFighter(Rogue rogue) {
-        return 0f;
-    }
 
     default float acceptFighter(Wizard wizard) {
         return 0f;
     }
-
 }

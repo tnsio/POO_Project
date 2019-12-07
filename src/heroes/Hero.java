@@ -43,8 +43,17 @@ public abstract class Hero implements Fighter {
         this.terrain = terrain;
     }
 
+    public final int getLevel() {
+        return level;
+    }
+
+    public final ArrayList<Ability> getAbilities() {
+        return abilities;
+    }
+
     public abstract int getStartingHp();
     public abstract int getHpPerLevel();
+
 
     public abstract float getModifier(FightContext fightContext);
 
@@ -61,8 +70,8 @@ public abstract class Hero implements Fighter {
                     + level + " "
                     + exp + " "
                     + currentHp + " "
-                    + position.getHorizontal() + " "
-                    + position.getVertical();
+                    + position.getVertical() + " "
+                    + position.getHorizontal();
         } else {
             return getIdentifier() + " dead";
         }
@@ -91,8 +100,11 @@ public abstract class Hero implements Fighter {
     }
 
     public final void gainExp(final int expGained) {
-        int previousLevel = level;
         exp += expGained;
+    }
+
+    public final void levelUp() {
+        int previousLevel = level;
         if (exp < FIRST_LEVEL_EXP) {
             level = 0;
         } else {
@@ -107,5 +119,28 @@ public abstract class Hero implements Fighter {
 
     public final boolean isIncapacitated() {
         return incapacitated;
+    }
+
+    public final int getAttackDamage(final Hero victim) {
+        int damage = 0;
+        for (Ability ability: abilities) {
+            damage += Math.round(ability.getFinalDamage(this, victim));
+        }
+
+        return damage;
+    }
+
+    public final void addStatusEffects(final Hero victim) {
+        if (victim.isAlive()) {
+            for (Ability ability : abilities) {
+                ability.addStatusEffects(this, victim);
+            }
+        }
+    }
+
+    public final void afterAttack() {
+        for (Ability ability: abilities) {
+            ability.afterCast();
+        }
     }
 }
