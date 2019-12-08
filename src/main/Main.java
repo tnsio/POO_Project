@@ -34,8 +34,6 @@ public final class Main {
 
         GameEngine gameEngine = new GameEngine(gameInput);
         gameEngine.play();
-        //TODO delete the next line
-        gameEngine.printHeroesToStdout();
         try {
             gameEngine.printHeroes(fs);
         } catch (IOException e) {

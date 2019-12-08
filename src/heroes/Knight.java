@@ -1,5 +1,7 @@
 package heroes;
 
+import abilities.Execute;
+import abilities.Slam;
 import attack.visitor.FightContext;
 import utility.Coordinate;
 import terrain.Terrain;
@@ -11,6 +13,8 @@ public final class Knight extends Hero {
 
     public Knight(final Coordinate position, final Terrain terrain) {
         super(position, terrain);
+        abilities.add(new Slam());
+        abilities.add(new Execute());
     }
 
     @Override

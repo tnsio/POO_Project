@@ -27,8 +27,8 @@ public final class GameMap {
 
     public Terrain getTerrain(final Coordinate coordinate) {
         TerrainFactory terrainFactory = TerrainFactory.getInstance();
-        char terrainIdentifier = rawMap.get(coordinate.getHorizontal())
-                .charAt(coordinate.getVertical());
+        char terrainIdentifier = rawMap.get(coordinate.getVertical())
+                .charAt(coordinate.getHorizontal());
 
         return terrainFactory.makeTerrain(terrainIdentifier);
     }

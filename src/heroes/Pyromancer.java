@@ -1,5 +1,7 @@
 package heroes;
 
+import abilities.Fireblast;
+import abilities.Ignite;
 import attack.visitor.FightContext;
 import utility.Coordinate;
 import terrain.Terrain;
@@ -11,6 +13,8 @@ public final class Pyromancer extends Hero {
 
     public Pyromancer(final Coordinate position, final Terrain terrain) {
         super(position, terrain);
+        abilities.add(new Fireblast());
+        abilities.add(new Ignite());
     }
 
     @Override

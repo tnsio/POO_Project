@@ -3,6 +3,7 @@ package heroes;
 import abilities.Ability;
 import attack.visitor.FightContext;
 import attack.visitor.Fighter;
+import map.GameMap;
 import utility.Coordinate;
 import terrain.Terrain;
 
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 public abstract class Hero implements Fighter {
     private static final int FIRST_LEVEL_EXP = 250;
     private static final int LEVEL_EXP = 50;
+    private static final int BASE_EXP_GAIN = 200;
+    public static final int EXP_HANDICAP = 40;
     private int maxHp;
     private int currentHp;
     private int exp = 0;
@@ -18,7 +21,7 @@ public abstract class Hero implements Fighter {
     private boolean alive = true;
     private Coordinate position;
     private Terrain terrain;
-    private ArrayList<Ability> abilities = new ArrayList<Ability>();
+    protected ArrayList<Ability> abilities = new ArrayList<Ability>();
     private int damageOverTime = 0;
     private int damageOverTimeDuration = 0;
     private boolean incapacitated = false;
@@ -39,8 +42,8 @@ public abstract class Hero implements Fighter {
         return terrain;
     }
 
-    public final void setTerrain(final Terrain terrain) {
-        this.terrain = terrain;
+    public final void setTerrainFrom(final GameMap gameMap) {
+        this.terrain = gameMap.getTerrain(position);
     }
 
     public final int getLevel() {
@@ -63,6 +66,18 @@ public abstract class Hero implements Fighter {
 
     public abstract String getIdentifier();
 
+    public final int getMaxHp() {
+        return maxHp;
+    }
+
+    public final int getCurrentHp() {
+        return currentHp;
+    }
+
+    public final float getLandModifier() {
+        return getModifier(getTerrain());
+    }
+
     @Override
     public final String toString() {
         if (alive) {
@@ -82,9 +97,6 @@ public abstract class Hero implements Fighter {
             incapacitatedDuration -= 1;
         }
 
-        if (incapacitatedDuration == 0) {
-            incapacitated = false;
-        }
 
         if (damageOverTimeDuration > 0) {
             damageOverTimeDuration -= 1;
@@ -92,23 +104,41 @@ public abstract class Hero implements Fighter {
         }
     }
 
+    public final void move(final char moveChar) {
+        if (!incapacitated && alive) {
+            position.move(moveChar);
+        }
+
+        if (incapacitatedDuration == 0) {
+            incapacitated = false;
+        }
+    }
+
     public final void takeDamage(final int damage) {
         currentHp -= damage;
-        if (currentHp < 0) {
+        if (currentHp <= 0) {
             alive = false;
         }
     }
 
-    public final void gainExp(final int expGained) {
-        exp += expGained;
+    public final void loot(final Hero victim) {
+        if (!victim.isAlive()) {
+            exp += Math.max(0, BASE_EXP_GAIN - (level - victim.getLevel()) * EXP_HANDICAP);
+        }
+
+        levelUp();
     }
 
     public final void levelUp() {
+        if (!alive) {
+            return;
+        }
+
         int previousLevel = level;
         if (exp < FIRST_LEVEL_EXP) {
             level = 0;
         } else {
-            level = (exp - FIRST_LEVEL_EXP) / LEVEL_EXP + 1;
+            level = ((exp - FIRST_LEVEL_EXP) / LEVEL_EXP) + 1;
         }
 
         if (previousLevel < level) {
@@ -130,10 +160,19 @@ public abstract class Hero implements Fighter {
         return damage;
     }
 
-    public final void addStatusEffects(final Hero victim) {
+    public final int getDeflectableDamage(final Hero victim) {
+        int damage = 0;
+        for (Ability ability: abilities) {
+            damage += Math.round(ability.getDamageOnTerrain(this, victim));
+        }
+
+        return damage;
+    }
+
+    public final void afflictStatusEffects(final Hero victim) {
         if (victim.isAlive()) {
             for (Ability ability : abilities) {
-                ability.addStatusEffects(this, victim);
+                ability.afflictStatusEffects(this, victim);
             }
         }
     }
@@ -143,4 +182,33 @@ public abstract class Hero implements Fighter {
             ability.afterCast();
         }
     }
+
+    public final void takeOverTimeDamage(final int damage, final int duration) {
+        damageOverTime = damage;
+        damageOverTimeDuration = duration;
+    }
+
+    public final void beIncapacitated(final int duration) {
+        if (duration > 0) {
+            incapacitated = true;
+            incapacitatedDuration = duration;
+        }
+    }
+
+    public final void cure() {
+        damageOverTimeDuration = 0;
+        damageOverTime = 0;
+        incapacitatedDuration = 0;
+        incapacitated = false;
+    }
+
+    /**
+     * Return true if the hero can take damage from deflect.
+     * Override in clases that are immune.
+     * @return
+     */
+    public boolean isImmuneToDeflect() {
+        return false;
+    }
+
 }

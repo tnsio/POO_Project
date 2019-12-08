@@ -49,11 +49,8 @@ public final class GameInputLoader {
                 movesList.add(fs.nextWord());
             }
 
-            return new GameInput(mapHeight, mapWidth, rawMap,
-                    classNames,
-                    coordinates,
-                    nrRounds,
-                    movesList);
+            return new GameInput(mapHeight, mapWidth, rawMap, classNames, coordinates,
+                    nrRounds, movesList);
         } catch (Exception e1) {
             e1.printStackTrace();
             return null;

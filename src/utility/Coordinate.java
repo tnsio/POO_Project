@@ -44,7 +44,7 @@ public final class Coordinate {
             case '_':
                 break;
             default:
-                // TODO folosim sau nu exceptii
+                System.out.println("ERROR: Wrong move character");
                 break;
 
         }

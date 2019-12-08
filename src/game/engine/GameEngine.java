@@ -54,7 +54,7 @@ public final class GameEngine {
             }
 
             heroesByCoordinates.get(hero.getPosition()).add(hero);
-            hero.setTerrain(map.getTerrain(hero.getPosition()));
+            hero.setTerrainFrom(map);
         }
     }
 
@@ -63,9 +63,7 @@ public final class GameEngine {
         String currentMoves = moves.get(currentRound);
         for (int heroIter = 0; heroIter < nrHeroes; heroIter++) {
             Hero hero = heroes.get(heroIter);
-            if (!hero.isIncapacitated() && hero.isAlive()) {
-                hero.getPosition().move(currentMoves.charAt(heroIter));
-            }
+            hero.move(currentMoves.charAt(heroIter));
         }
 
         placeHeroes();
@@ -104,11 +102,14 @@ public final class GameEngine {
         hero1.takeDamage(damageFrom2To1);
         hero2.takeDamage(damageFrom1To2);
 
-        hero1.addStatusEffects(hero2);
-        hero2.addStatusEffects(hero1);
+        hero1.afflictStatusEffects(hero2);
+        hero2.afflictStatusEffects(hero1);
 
         hero1.afterAttack();
         hero2.afterAttack();
+
+        hero1.loot(hero2);
+        hero2.loot(hero1);
     }
 
     public void play() {
@@ -119,6 +120,7 @@ public final class GameEngine {
             fightAll();
             buryHeroes();
         }
+
     }
 
     public void printHeroes(final FileSystem fs) throws IOException {
@@ -128,10 +130,45 @@ public final class GameEngine {
         }
     }
 
-    // TODO Make up your mind if you need to delete this
     public void printHeroesToStdout() {
         for (Hero hero : heroes) {
             System.out.println(hero);
         }
+    }
+
+    // Used for debugging, and will be updated and used for debugging in stage 2
+    @Override
+    public String toString() {
+        StringBuilder gameStateString = new StringBuilder("Round " + currentRound
+                + System.lineSeparator());
+        for (int rowIter = 0; rowIter < map.getHeight(); rowIter++) {
+            for (int colIter = 0; colIter < map.getWidth(); colIter++) {
+                Coordinate coordinate = new Coordinate(colIter, rowIter);
+                ArrayList<Hero> heroesHere = heroesByCoordinates.get(coordinate);
+
+                if (heroesHere == null) {
+                    gameStateString.append("-  ");
+                    continue;
+                }
+
+                switch (heroesHere.size()) {
+                    case 0:
+                        gameStateString.append("-  ");
+                        break;
+                    case 1:
+                        gameStateString.append(heroesHere.get(0).getIdentifier() + "  ");
+                        break;
+                    case 2:
+                        gameStateString.append(heroesHere.get(0).getIdentifier()
+                                + heroesHere.get(1).getIdentifier() + " ");
+                        break;
+                    default:
+                        System.out.println("ERROR: Too many heroes on one tile");
+                }
+
+            }
+            gameStateString.append(System.lineSeparator());
+        }
+        return gameStateString.toString();
     }
 }

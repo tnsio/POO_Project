@@ -1,5 +1,7 @@
 package heroes;
 
+import abilities.Backstab;
+import abilities.Paralysis;
 import attack.visitor.FightContext;
 import utility.Coordinate;
 import terrain.Terrain;
@@ -11,6 +13,8 @@ public final class Rogue extends Hero {
 
     public Rogue(final Coordinate position, final Terrain terrain) {
         super(position, terrain);
+        abilities.add(new Backstab());
+        abilities.add(new Paralysis());
     }
 
     @Override

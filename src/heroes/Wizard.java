@@ -1,5 +1,7 @@
 package heroes;
 
+import abilities.Deflect;
+import abilities.Drain;
 import attack.visitor.FightContext;
 import utility.Coordinate;
 import terrain.Terrain;
@@ -11,6 +13,8 @@ public final class Wizard extends Hero {
 
     public Wizard(final Coordinate position, final Terrain terrain) {
         super(position, terrain);
+        abilities.add(new Drain());
+        abilities.add(new Deflect());
     }
 
     @Override
@@ -32,4 +36,10 @@ public final class Wizard extends Hero {
     public String getIdentifier() {
         return "W";
     }
+
+    @Override
+    public boolean isImmuneToDeflect() {
+        return true;
+    }
+
 }
