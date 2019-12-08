@@ -32,13 +32,17 @@ public final class Main {
         gameInputLoader = new GameInputLoader(fs);
         gameInput = gameInputLoader.load();
 
+        if (gameInput == null) {
+            System.out.println("ERROR: Something went wrong with creating the game input");
+            return;
+        }
+
         GameEngine gameEngine = new GameEngine(gameInput);
         gameEngine.play();
         try {
             gameEngine.printHeroes(fs);
         } catch (IOException e) {
             System.out.println("ERROR: Can't access input or output files");
-            return;
         } finally {
             try {
                 fs.close();
