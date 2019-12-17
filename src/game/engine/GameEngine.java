@@ -3,7 +3,8 @@ package game.engine;
 import fileio.FileSystem;
 import heroes.Hero;
 import heroes.HeroFactory;
-import main.GameInput;
+import main.AngelInput;
+import main.BaseGameInput;
 import map.GameMap;
 import utility.Coordinate;
 
@@ -20,26 +21,31 @@ public final class GameEngine {
     private int currentRound = 0;
     private final ArrayList<String> moves;
 
-    public GameEngine(final GameInput gameInput) {
-        map = new GameMap(gameInput.getMapHeight(), gameInput.getMapWidth(),
-                gameInput.getRawMap());
+    public GameEngine(final BaseGameInput baseGameInput) {
+        map = new GameMap(baseGameInput.getMapHeight(), baseGameInput.getMapWidth(),
+                baseGameInput.getRawMap());
 
-        nrRounds = gameInput.getNrRounds();
+        heroesByCoordinates = new HashMap<Coordinate, ArrayList<Hero>>();
+        nrRounds = baseGameInput.getNrRounds();
 
         heroes = new ArrayList<Hero>();
-        int nrHeroes = gameInput.getClassNames().size();
+        int nrHeroes = baseGameInput.getClassNames().size();
         HeroFactory heroFactory = HeroFactory.getInstance();
-        ArrayList<String> classNames = gameInput.getClassNames();
-        ArrayList<Coordinate> coordinates = gameInput.getCoordinates();
+        ArrayList<String> classNames = baseGameInput.getClassNames();
+        ArrayList<Coordinate> coordinates = baseGameInput.getCoordinates();
 
         for (int heroIter = 0; heroIter < nrHeroes; heroIter++) {
             heroes.add(heroFactory.createHero(classNames.get(heroIter), coordinates.get(heroIter),
                     map));
         }
 
-        heroesByCoordinates = new HashMap<Coordinate, ArrayList<Hero>>();
         placeHeroes();
-        moves = gameInput.getMoves();
+        moves = baseGameInput.getMoves();
+    }
+
+    public GameEngine(final  BaseGameInput baseGameInput, final AngelInput angelInput) {
+        this(baseGameInput);
+        //TODO Finish the game engine
     }
 
     private void placeHeroes() {

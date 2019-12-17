@@ -26,18 +26,27 @@ public final class Main {
             return;
         }
 
-        GameInput gameInput;
+        BaseGameInput baseGameInput;
+        AngelInput angelInput;
         GameInputLoader gameInputLoader;
 
         gameInputLoader = new GameInputLoader(fs);
-        gameInput = gameInputLoader.load();
 
-        if (gameInput == null) {
+        try {
+            baseGameInput = gameInputLoader.loadBaseInput();
+        } catch (IOException e) {
             System.out.println("ERROR: Something went wrong with creating the game input");
             return;
         }
 
-        GameEngine gameEngine = new GameEngine(gameInput);
+        try {
+            angelInput = gameInputLoader.loadAngelInput(baseGameInput.getNrRounds());
+        } catch (IOException e) {
+            System.out.println("ERROR: Something went wrong with creating the angel input");
+            return;
+        }
+
+        GameEngine gameEngine = new GameEngine(baseGameInput, angelInput);
         gameEngine.play();
         try {
             gameEngine.printHeroes(fs);

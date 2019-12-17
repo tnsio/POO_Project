@@ -5,7 +5,7 @@ import utility.Coordinate;
 import java.util.ArrayList;
 
 // Class which holds minimally processed game input
-public final class GameInput {
+public final class BaseGameInput {
     private final int mapHeight;
     private final int mapWidth;
     private final int nrRounds;
@@ -14,11 +14,11 @@ public final class GameInput {
     private final ArrayList<Coordinate> coordinates;
     private final ArrayList<String> moves;
 
-    public GameInput(final int mapHeight, final int mapWidth, final ArrayList<String> rawMap,
-                     final ArrayList<String> classNames,
-                     final ArrayList<Coordinate> coordinates,
-                     final int nrRounds,
-                     final ArrayList<String> moves) {
+    public BaseGameInput(final int mapHeight, final int mapWidth, final ArrayList<String> rawMap,
+                         final ArrayList<String> classNames,
+                         final ArrayList<Coordinate> coordinates,
+                         final int nrRounds,
+                         final ArrayList<String> moves) {
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
         this.rawMap = rawMap;
