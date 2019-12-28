@@ -1,6 +1,7 @@
 package game.engine;
 
 import fileio.FileSystem;
+import great.magician.GreatMagician;
 import heroes.Hero;
 import heroes.HeroFactory;
 import main.AngelInput;
@@ -17,6 +18,7 @@ public final class GameEngine {
     private GameMap map;
     private ArrayList<Hero> heroes;
     private Map<Coordinate, ArrayList<Hero>> heroesByCoordinates;
+    private Map<Coordinate, ArrayList<Hero>> deadHeroesByCoordinates;
     private final int nrRounds;
     private int currentRound = 0;
     private final ArrayList<String> moves;
@@ -26,6 +28,7 @@ public final class GameEngine {
                 baseGameInput.getRawMap());
 
         heroesByCoordinates = new HashMap<Coordinate, ArrayList<Hero>>();
+        deadHeroesByCoordinates = new HashMap<>();
         nrRounds = baseGameInput.getNrRounds();
 
         heroes = new ArrayList<Hero>();
@@ -35,8 +38,8 @@ public final class GameEngine {
         ArrayList<Coordinate> coordinates = baseGameInput.getCoordinates();
 
         for (int heroIter = 0; heroIter < nrHeroes; heroIter++) {
-            heroes.add(heroFactory.createHero(classNames.get(heroIter), coordinates.get(heroIter),
-                    map));
+            heroes.add(heroFactory.createHero(heroIter, classNames.get(heroIter),
+                    coordinates.get(heroIter), map));
         }
 
         placeHeroes();
@@ -69,6 +72,10 @@ public final class GameEngine {
         String currentMoves = moves.get(currentRound);
         for (int heroIter = 0; heroIter < nrHeroes; heroIter++) {
             Hero hero = heroes.get(heroIter);
+            if (!hero.isAlive()) {
+                continue;
+            }
+
             hero.move(currentMoves.charAt(heroIter));
         }
 
@@ -77,7 +84,18 @@ public final class GameEngine {
 
     private void buryHeroes() {
         for (Map.Entry<Coordinate, ArrayList<Hero>> tile: heroesByCoordinates.entrySet()) {
-            tile.getValue().removeIf((Hero hero) -> !hero.isAlive());
+            for (Hero hero: tile.getValue()) {
+                if (!hero.isAlive()) {
+                    if (!deadHeroesByCoordinates.containsKey(hero.getPosition())) {
+                        deadHeroesByCoordinates.put(hero.getPosition(), new ArrayList<>());
+                    }
+
+                    deadHeroesByCoordinates.get(hero.getPosition()).add(hero);
+
+                    // This needs to be improved if there will be more heroes on a tile
+                    heroesByCoordinates.get(hero.getPosition()).remove(hero);
+                }
+            }
         }
     }
 
@@ -105,8 +123,8 @@ public final class GameEngine {
         int damageFrom1To2 = hero1.getAttackDamage(hero2);
         int damageFrom2To1 = hero2.getAttackDamage(hero1);
 
-        hero1.takeDamage(damageFrom2To1);
-        hero2.takeDamage(damageFrom1To2);
+        hero1.takeDamageFrom(damageFrom2To1, hero2);
+        hero2.takeDamageFrom(damageFrom1To2, hero1);
 
         hero1.afflictStatusEffects(hero2);
         hero2.afflictStatusEffects(hero1);
@@ -120,11 +138,17 @@ public final class GameEngine {
 
     public void play() {
         for (currentRound = 0; currentRound < nrRounds; currentRound++) {
+            GreatMagician.getInstance().addRoundHeader(currentRound);
+
             applyAllStatusEffects();
             buryHeroes();
+
             moveHeroes();
+
             fightAll();
             buryHeroes();
+
+            GreatMagician.getInstance().addRoundFooter();
         }
 
     }

@@ -3,17 +3,24 @@ package heroes;
 import abilities.Ability;
 import attack.visitor.FightContext;
 import attack.visitor.Fighter;
+import game.action.GameAction;
+import game.action.KillAction;
+import game.action.LevelUpAction;
+import game.observer.Observable;
+import game.observer.Observer;
+import great.magician.GreatMagician;
 import map.GameMap;
 import utility.Coordinate;
 import terrain.Terrain;
 
 import java.util.ArrayList;
 
-public abstract class Hero implements Fighter {
+public abstract class Hero implements Fighter, Observable {
     private static final int FIRST_LEVEL_EXP = 250;
     private static final int LEVEL_EXP = 50;
     private static final int BASE_EXP_GAIN = 200;
     public static final int EXP_HANDICAP = 40;
+    private final int id;
     private int maxHp;
     private int currentHp;
     private int exp = 0;
@@ -26,12 +33,15 @@ public abstract class Hero implements Fighter {
     private int damageOverTimeDuration = 0;
     private boolean incapacitated = false;
     private int incapacitatedDuration = 0;
+    private ArrayList<Observer> observers = new ArrayList<Observer>();
 
-    public Hero(final Coordinate position, final Terrain terrain) {
+    public Hero(final int id, final Coordinate position, final Terrain terrain) {
+        this.id = id;
         this.position = position;
         this.terrain = terrain;
         this.maxHp = getStartingHp();
         this.currentHp = getStartingHp();
+        observers.add(GreatMagician.getInstance());
     }
 
     public final Coordinate getPosition() {
@@ -60,11 +70,17 @@ public abstract class Hero implements Fighter {
 
     public abstract float getModifier(FightContext fightContext);
 
+    public abstract String getHeroName();
+
     public final boolean isAlive() {
         return alive;
     }
 
     public abstract String getIdentifier();
+
+    public final int getId() {
+        return id;
+    }
 
     public final int getMaxHp() {
         return maxHp;
@@ -121,6 +137,13 @@ public abstract class Hero implements Fighter {
         }
     }
 
+    public final void takeDamageFrom(final int damage, final Hero attacker) {
+        takeDamage(damage);
+        if (!alive) {
+            notifyAllObservers(new KillAction(attacker, this));
+        }
+    }
+
     public final void loot(final Hero victim) {
         if (!victim.isAlive()) {
             exp += Math.max(0, BASE_EXP_GAIN - (level - victim.getLevel()) * EXP_HANDICAP);
@@ -130,20 +153,22 @@ public abstract class Hero implements Fighter {
     }
 
     public final void levelUp() {
-        if (!alive) {
-            return;
-        }
-
         int previousLevel = level;
+        calculateLevel();
+
+        if (previousLevel < level && alive) {
+            maxHp = getStartingHp() + getHpPerLevel() * level;
+            currentHp = maxHp;
+            //TODO be careful here if a dead hero levels up
+            notifyAllObservers(new LevelUpAction(this, previousLevel));
+        }
+    }
+
+    private void calculateLevel() {
         if (exp < FIRST_LEVEL_EXP) {
             level = 0;
         } else {
             level = ((exp - FIRST_LEVEL_EXP) / LEVEL_EXP) + 1;
-        }
-
-        if (previousLevel < level) {
-            maxHp = getStartingHp() + getHpPerLevel() * level;
-            currentHp = maxHp;
         }
     }
 
@@ -204,11 +229,21 @@ public abstract class Hero implements Fighter {
 
     /**
      * Return true if the hero can take damage from deflect.
-     * Override in clases that are immune.
+     * Override in classes that are immune.
      * @return
      */
     public boolean isImmuneToDeflect() {
         return false;
     }
 
+    @Override
+    public final void addObserver(final Observer observer) {
+        observers.add(observer);
+    }
+
+    public final void notifyAllObservers(final GameAction gameAction) {
+        for (Observer observer: observers) {
+            observer.update(gameAction);
+        }
+    }
 }

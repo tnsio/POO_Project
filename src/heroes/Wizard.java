@@ -11,8 +11,8 @@ public final class Wizard extends Hero {
     private static final int WIZARD_LEVEL_UP_HP = 30;
     public static final float WIZARD_DESERT_BONUS = 0.1f;
 
-    public Wizard(final Coordinate position, final Terrain terrain) {
-        super(position, terrain);
+    public Wizard(final int id, final Coordinate position, final Terrain terrain) {
+        super(id, position, terrain);
         abilities.add(new Drain());
         abilities.add(new Deflect());
     }
@@ -42,4 +42,8 @@ public final class Wizard extends Hero {
         return true;
     }
 
+    @Override
+    public String getHeroName() {
+        return "Wizard";
+    }
 }

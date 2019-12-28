@@ -58,13 +58,11 @@ public final class GameInputLoader {
     // TODO load angel input
     public AngelInput loadAngelInput(final int nrRounds) throws IOException {
         ArrayList<ArrayList<String>> angelNames = new ArrayList<>();
-        ArrayList<ArrayList<Integer>> horizontalCoordinates = new ArrayList<>();
-        ArrayList<ArrayList<Integer>> verticalCoordinates = new ArrayList<>();
+        ArrayList<ArrayList<Coordinate>> coordinates = new ArrayList<>();
         for (int roundIter = 0; roundIter < nrRounds; roundIter++) {
             int nrAngels = fs.nextInt();
             angelNames.add(new ArrayList<>());
-            horizontalCoordinates.add(new ArrayList<>());
-            verticalCoordinates.add(new ArrayList<>());
+            coordinates.add(new ArrayList<>());
 
             for (int angelIter = 0; angelIter < nrAngels; angelIter++) {
                 String angelDescription = fs.nextWord();
@@ -73,11 +71,11 @@ public final class GameInputLoader {
                 angelNames.get(roundIter).add(stringTokenizer.nextToken());
                 Integer horizontalCoordinate = Integer.parseInt(stringTokenizer.nextToken());
                 Integer verticalCoordinate = Integer.parseInt(stringTokenizer.nextToken());
-                horizontalCoordinates.get(roundIter).add(horizontalCoordinate);
-                verticalCoordinates.get(roundIter).add(verticalCoordinate);
+                coordinates.get(roundIter).add(new Coordinate(horizontalCoordinate,
+                        verticalCoordinate));
             }
         }
 
-        return new AngelInput(angelNames, horizontalCoordinates, verticalCoordinates);
+        return new AngelInput(angelNames, coordinates);
     }
 }

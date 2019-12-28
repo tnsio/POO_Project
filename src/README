@@ -1,0 +1,25 @@
+TANASĂ IOAN 325CD
+    For implementing game itself the class GameEngine is used.
+    For memory efficiency the Heroes are stored in a HashMap by their
+position.
+    The double dispatch design pattern defined in the attack.visitor package
+and it is used on two separate occasions:
+    - getting the modifier of a ability on a victim
+    - getting the buff of a type of Terrain on an attacker
+Thus both the class Hero and the class Ability implement a FightContext.
+
+    Throughout the project there is error handling, both for file errors and
+bad input errors that would not be detected otherwise.
+
+    I have chosen not to use a class containing constants since it is an
+anti-pattern, instead constants are declared inside the Heroes/Abilities they
+adhere to.
+
+    Methods do not check the class type of any object, explicitly or
+implicitly, instead appropriate methods are defined and overrode.
+
+    The more quirky abilities could have been handled nicer with inheritance,
+and defining different types of abilities but i ran out of time.
+
+    There could also have been real error handling instead of prints but what
+can you do.

@@ -11,8 +11,8 @@ public final class Pyromancer extends Hero {
     private static final int PYROMANCER_LEVEL_UP_HP = 50;
     public static final float PYROMANCER_VOLCANIC_BONUS = 0.25f;
 
-    public Pyromancer(final Coordinate position, final Terrain terrain) {
-        super(position, terrain);
+    public Pyromancer(final int id, final Coordinate position, final Terrain terrain) {
+        super(id, position, terrain);
         abilities.add(new Fireblast());
         abilities.add(new Ignite());
     }
@@ -35,5 +35,10 @@ public final class Pyromancer extends Hero {
     @Override
     public String getIdentifier() {
         return "P";
+    }
+
+    @Override
+    public String getHeroName() {
+        return "Pyromancer";
     }
 }

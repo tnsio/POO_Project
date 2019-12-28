@@ -11,8 +11,8 @@ public final class Knight extends Hero {
     private static final int KNIGHT_LEVEL_UP_HP = 80;
     public static final float KNIGHT_LAND_BONUS = 0.15f;
 
-    public Knight(final Coordinate position, final Terrain terrain) {
-        super(position, terrain);
+    public Knight(final int id, final Coordinate position, final Terrain terrain) {
+        super(id, position, terrain);
         abilities.add(new Slam());
         abilities.add(new Execute());
     }
@@ -35,5 +35,10 @@ public final class Knight extends Hero {
     @Override
     public String getIdentifier() {
         return "K";
+    }
+
+    @Override
+    public String getHeroName() {
+        return "Knight";
     }
 }

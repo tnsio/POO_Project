@@ -11,8 +11,8 @@ public final class Rogue extends Hero {
     private static final int ROGUE_LEVEL_UP_HP = 40;
     public static final float ROGUE_WOODS_BONUS = 0.15f;
 
-    public Rogue(final Coordinate position, final Terrain terrain) {
-        super(position, terrain);
+    public Rogue(final int id, final Coordinate position, final Terrain terrain) {
+        super(id, position, terrain);
         abilities.add(new Backstab());
         abilities.add(new Paralysis());
     }
@@ -35,5 +35,10 @@ public final class Rogue extends Hero {
     @Override
     public String getIdentifier() {
         return "R";
+    }
+
+    @Override
+    public String getHeroName() {
+        return "Rogue";
     }
 }

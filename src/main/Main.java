@@ -2,6 +2,7 @@ package main;
 
 import fileio.FileSystem;
 import game.engine.GameEngine;
+import great.magician.GreatMagician;
 
 import java.io.IOException;
 
@@ -49,6 +50,15 @@ public final class Main {
         GameEngine gameEngine = new GameEngine(baseGameInput, angelInput);
         gameEngine.play();
         try {
+            // Debug printing to stdout
+            System.out.print(GreatMagician.getInstance().getLog().toString());
+            System.out.println("~~ Results ~~");
+            gameEngine.printHeroesToStdout();
+
+            // Real printing
+            fs.writeWord(GreatMagician.getInstance().getLog().toString());
+            fs.writeWord("~~ Results ~~");
+            fs.writeNewLine();
             gameEngine.printHeroes(fs);
         } catch (IOException e) {
             System.out.println("ERROR: Can't access input or output files");
